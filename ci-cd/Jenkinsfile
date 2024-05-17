@@ -3,27 +3,21 @@ pipeline {
 
     stages {
         stage('Build Frontend') {
-            agent {
-                docker {
-                    image 'node:14'
-                }
-            }
             steps {
                 script {
-                    sh 'npm install'
-                    sh 'npm run build'
+                    docker.image('node:14').inside {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
                 }
             }
         }
         stage('Build Backend') {
-            agent {
-                docker {
-                    image 'maven:3.8.1-jdk-11'
-                }
-            }
             steps {
                 script {
-                    sh 'mvn clean package -f backend/pom.xml'
+                    docker.image('maven:3.8.1-jdk-11').inside {
+                        sh 'mvn clean package -f backend/pom.xml'
+                    }
                 }
             }
         }
