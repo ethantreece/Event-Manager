@@ -1,52 +1,31 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.8.1-openjdk-11'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
-    environment {
-        NODE_HOME = tool name: 'NodeJS', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
-        PATH = "${env.NODE_HOME}/bin:${env.PATH}"
-    }
+    agent any
+
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/ethantreece/Event-Manager'
-            }
-        }
         stage('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:14'
+                }
+            }
             steps {
-                dir('frontend') {
+                script {
                     sh 'npm install'
                     sh 'npm run build'
                 }
             }
         }
         stage('Build Backend') {
-            steps {
-                dir('backend') {
-                    sh 'mvn clean package'
+            agent {
+                docker {
+                    image 'maven:3.8.1-jdk-11'
                 }
             }
-        }
-        stage('Test Backend') {
             steps {
-                dir('backend') {
-                    sh 'mvn test'
+                script {
+                    sh 'mvn clean package -f backend/pom.xml'
                 }
             }
-        }
-    }
-    post {
-        always {
-            cleanWs()
-        }
-        success {
-            echo 'Build completed successfully'
-        }
-        failure {
-            echo 'Build failed'
         }
     }
 }

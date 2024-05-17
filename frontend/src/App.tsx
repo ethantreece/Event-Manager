@@ -18,6 +18,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <h1>{message}</h1>
+      <p>HELLO WORLD</p>
     </div>
   );
 };
