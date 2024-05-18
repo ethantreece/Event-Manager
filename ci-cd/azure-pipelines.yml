@@ -1,16 +1,11 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
   - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: "ubuntu-latest"
 
 variables:
-  MONGODB_CONNECTION_STRING: $(MONGODB_CONNECTION_STRING)
+  - group: EventManagerSecrets
 
 stages:
   - stage: Build
@@ -54,6 +49,7 @@ stages:
               appType: "webApp"
               appName: "event-manager-backend"
               package: "$(System.DefaultWorkingDirectory)/backend/target/*.jar"
-              env:
-                MONGODB_CONNECTION_STRING: $(MONGODB_CONNECTION_STRING)
+              appSettings:
+                - name: MONGODB_CONNECTION_STRING
+                  value: $(MONGODB_CONNECTION_STRING)
             displayName: "Deploy backend"
