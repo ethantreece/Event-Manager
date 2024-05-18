@@ -37,7 +37,7 @@ stages:
         steps:
           - task: AzureWebApp@1
             inputs:
-              azureSubscription: "Azure subscription 1"
+              azureSubscription: "AzureSubscription1"
               appType: "webApp"
               appName: "event-manager-frontend"
               package: "$(System.DefaultWorkingDirectory)/frontend/build"
@@ -47,7 +47,7 @@ stages:
         steps:
           - task: AzureWebApp@1
             inputs:
-              azureSubscription: "Azure subscription 1"
+              azureSubscription: "AzureSubscription1"
               appType: "webApp"
               appName: "event-manager-backend"
               package: "$(System.DefaultWorkingDirectory)/backend/target/*.jar"
@@ -58,7 +58,7 @@ stages:
               MONGODB_CONNECTION_STRING: $(MONGODB_CONNECTION_STRING)
           - task: AzureWebApp@1
             inputs:
-              azureSubscription: "Azure subscription 1"
+              azureSubscription: "AzureSubscription1"
               appType: "webApp"
               appName: "event-manager-backend"
               appSettings: |
