@@ -10,7 +10,7 @@ variables:
 stages:
   - stage: Build
     jobs:
-      - job: Build
+      - job: BuildFrontend
         steps:
           - task: NodeTool@0
             inputs:
@@ -23,6 +23,8 @@ stages:
               npm run build
             displayName: "Build frontend"
 
+      - job: BuildBackend
+        steps:
           - task: Maven@3
             inputs:
               mavenPomFile: "backend/pom.xml"
@@ -49,7 +51,16 @@ stages:
               appType: "webApp"
               appName: "event-manager-backend"
               package: "$(System.DefaultWorkingDirectory)/backend/target/*.jar"
-              appSettings:
-                - name: MONGODB_CONNECTION_STRING
-                  value: $(MONGODB_CONNECTION_STRING)
+            displayName: "Deploy backend"
+          - script: echo "Setting environment variables for the backend app"
+            displayName: "Set Backend Environment Variables"
+            env:
+              MONGODB_CONNECTION_STRING: $(MONGODB_CONNECTION_STRING)
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: "Azure subscription 1"
+              appType: "webApp"
+              appName: "event-manager-backend"
+              appSettings: |
+                MONGODB_CONNECTION_STRING=$(MONGODB_CONNECTION_STRING)
             displayName: "Deploy backend"
